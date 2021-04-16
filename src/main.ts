@@ -10,17 +10,26 @@ dotenv.config();
 async function bootstrap() {
   const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
-  app.useGlobalFilters(new DispatchError());
+
+  app.enableCors();
 
   app.useGlobalFilters(new DispatchError());
 
   const options = new DocumentBuilder()
-        .setTitle('User Login FBGG Application')
-        .setDescription('APIs for the User Login FBGG')
-        .setVersion('1.0')
-        .addTag('nestjs')
-        .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
-        .build();
+    .setTitle('User Login FBGG Application')
+    .setDescription('APIs for the User Login FBGG')
+    .setVersion('1.0')
+    .addTag('nestjs')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header'
+      },
+      'accessToken'
+    )
+    .build();
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('api', app, document);
 

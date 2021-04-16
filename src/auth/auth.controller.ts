@@ -1,6 +1,6 @@
 import { Controller, Get, HttpStatus, Req, UseFilters, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
-import { HttpExceptionFilter } from "src/ExceptionFilters/http-exception.filter";
+import { HttpExceptionFilter } from "../ExceptionFilters/http-exception.filter";
 import { AuthService } from "./auth.service";
 import {ApiBearerAuth, ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
 
@@ -14,6 +14,7 @@ export class AuthController {
     }
 
     @Get("/facebook")
+    @ApiResponse({ status: 500, description: 'This authorization code has been used.'})
     @UseGuards(AuthGuard("facebook"))
     async facebookLogin(): Promise<any> {
         return HttpStatus.OK;
