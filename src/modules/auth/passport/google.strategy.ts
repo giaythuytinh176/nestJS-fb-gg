@@ -5,6 +5,7 @@ import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { Model } from 'mongoose';
 import { IUser } from '../../user/interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
+import * as passport from 'passport';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -15,7 +16,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
       callbackURL: process.env.GOOGLE_CALLBACK,
-      passReqToCallback: true,
+      // passReqToCallback: true,
       scope: ['email', 'profile'],
     });
   }
@@ -35,33 +36,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         return done(null, existingUser);
       }
 
-      // const { name, emails, photos } = profile;
-      // const user = {
-      //   email: emails[0].value,
-      //   firstName: name.givenName,
-      //   lastName: name.familyName,
-      //   picture: photos[0].value,
-      //   // image: profile._json.picture,
-      //   displayName: profile.displayName,
-      //   verified: emails[0].verified,
-      //   locale: profile._json.locale,
-      //   // accessToken
-      //   googleAccount: {
-      //     googleId: profile.id,
-      //     googleToken: accessToken,
-      //   },
-      // };
-
-      //done(null, user);
-
-      const { id, displayName } = profile;
       const user: IUser = new this.userModel({
         method: 'google',
         roles: ['user'],
         google: {
-          id,
+          id: profile.id,
           email: profile.emails ? profile.emails[0].value : undefined,
-          displayName,
+          displayName: profile.displayName,
           token: accessToken,
         },
       });

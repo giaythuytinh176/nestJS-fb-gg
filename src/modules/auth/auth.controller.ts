@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Post,
   Req,
   UseFilters,
   UseGuards,
@@ -14,12 +15,19 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { IToken } from './interfaces/token.interface';
+import { Request } from 'express';
 
 @Controller('auth')
 // load HttpExceptionFilter
 // @UseFilters(HttpExceptionFilter)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
+  @Post('local/signup')
+  async requestJsonWebTokenAfterLocalSignUp(@Req() req: Request): Promise<any> {
+    return await this.authService.createToken(req.user);
+  }
 
   @Get('/facebook')
   @ApiResponse({

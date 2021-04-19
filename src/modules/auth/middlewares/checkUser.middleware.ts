@@ -1,5 +1,8 @@
-import { Injectable, NestMiddleware } from '@nestjs/common';
-import { MiddlewareBuilder } from '@nestjs/core';
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 
 @Injectable()
@@ -8,7 +11,8 @@ export class checkUserMiddleware implements NestMiddleware {
     console.log('Request...');
     // console.log('req.user', req);
     if (!req.user) {
-      res.redirect('/home');
+      throw new UnauthorizedException();
+      // res.redirect('/home');
     }
     next();
   }

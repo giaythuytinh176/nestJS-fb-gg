@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
+import * as passport from 'passport';
 import { Profile, Strategy } from 'passport-facebook';
 import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { IUser } from '../../user/interfaces/user.interface';
@@ -18,7 +19,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       scope: 'email',
       profileFields: ['emails', 'name', 'id', 'displayName', 'photos'],
       enableProof: true,
-      passReqToCallback: true,
+      // passReqToCallback: true,
     });
   }
 
@@ -36,23 +37,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
       if (existingUser) {
         return done(null, existingUser);
       }
-
-      // const { name, emails, id, displayName, photos } = profile;
-      // const user = {
-      //   email: emails[0].value,
-      //   firstName: name.givenName,
-      //   lastName: name.familyName,
-      //   middlename: profile.name.middleName ?? '',
-      //   facebook: {
-      //     id: profile.id,
-      //     avatar: profile.photos[0].value,
-      //   },
-      // };
-
-      // const payload = {
-      //   user,
-      //   accessToken,
-      // };
 
       const user: IUser = new this.userModel({
         method: 'facebook',

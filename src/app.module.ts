@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './modules/user/user.module';
 import * as dotenv from 'dotenv';
 import { AuthModule } from './modules/auth/auth.module';
-import { checkUserMiddleware } from './modules/auth/checkUser.middleware';
+import { checkUserMiddleware } from './modules/auth/middlewares/checkUser.middleware';
 
 dotenv.config();
 
