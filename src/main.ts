@@ -66,6 +66,7 @@ async function bootstrap() {
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
 
+  
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
