@@ -1,0 +1,12 @@
+{
+    "type": "mongodb",
+    "url": "mongodb+srv://dbTamLe:OvWBDHb1L59JmQAa@cluster0-tamle.lzjkq.mongodb.net/user?authSource=admin&replicaSet=atlas-14kagn-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
+    "useNewUrlParser": true,
+    "synchronize": true,
+    "useUnifiedTopology": true,
+    "logging": true,
+    "ssl": true,
+    "entities": [
+        "dist/**/*.entity{.ts,.js}"
+    ]
+}

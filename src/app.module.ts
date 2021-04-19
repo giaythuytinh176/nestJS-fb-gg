@@ -1,25 +1,19 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { AuthController } from "./auth/auth.controller";
-import { AuthModule } from "./auth/auth.module";
-import { LoggerMiddleware } from "./middleware/logger.middleware";
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserModule } from './modules/user/user.module';
+import * as dotenv from 'dotenv';
+import { AuthModule } from './modules/auth/auth.module';
+import { checkUserMiddleware } from './modules/auth/checkUser.middleware';
+
+dotenv.config();
 
 @Module({
-  imports: [AuthModule],
+  imports: [
+    AuthModule,
+    UserModule,
+    MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING),
+  ],
   controllers: [],
-  providers: []
+  providers: [],
 })
-export class AppModule implements NestModule {
-  // constructor(private connection: Connection) {}
-  async configure(consumer: MiddlewareConsumer) {
-      await consumer
-        .apply(LoggerMiddleware)
-        // .forRoutes('tasks');
-       // .forRoutes({ path: 'tasks', method: RequestMethod.POST });
-      //  .exclude(
-      //     { path: 'tasks', method: RequestMethod.GET },
-      //     { path: 'tasks', method: RequestMethod.POST },
-      //     // 'tasks/(.*)', 
-      //   )
-       .forRoutes(AuthController);
- }
-}
+export class AppModule {}
