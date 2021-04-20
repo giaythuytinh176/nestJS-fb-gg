@@ -1,31 +1,59 @@
 import {
+  Body,
   Controller,
   Get,
   HttpStatus,
+  Logger,
   Post,
   Req,
   UseFilters,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { IToken } from './interfaces/token.interface';
 import { Request } from 'express';
+import { tokenDTO } from './dto/token.dto';
+import { CreateUserDTO } from '../user/dto/create-user.dto';
 
+@ApiBearerAuth()
+@ApiTags('users')
 @Controller('auth')
 // load HttpExceptionFilter
 // @UseFilters(HttpExceptionFilter)
 export class AuthController {
+  private logger = new Logger('UsersController');
+
   constructor(private readonly authService: AuthService) {}
 
   @Post('local/signup')
-  async requestJsonWebTokenAfterLocalSignUp(@Req() req: Request): Promise<any> {
+  @ApiOperation({ summary: 'Create user' })
+  @ApiBody({ type: CreateUserDTO })
+  @ApiOkResponse({ type: tokenDTO })
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 422, description: 'Entity Validation Error.' })
+  async requestJsonWebTokenAfterLocalSignUp(
+    @Body() createUserDto: CreateUserDTO,
+    @Req() req: Request,
+  ): Promise<tokenDTO> {
+    this.logger.verbose(
+      `Creating a new user. Data: ${JSON.stringify(createUserDto)}`,
+    );
+
     return await this.authService.createToken(req.user);
   }
 
@@ -34,6 +62,8 @@ export class AuthController {
     status: 500,
     description: 'This authorization code has been used.',
   })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Not Found.' })
   @UseGuards(AuthGuard('facebook'))
   async facebookLogin(): Promise<any> {
     return HttpStatus.OK;

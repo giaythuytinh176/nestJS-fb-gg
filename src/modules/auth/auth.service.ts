@@ -4,7 +4,7 @@ import { sign } from 'jsonwebtoken';
 import { Model } from 'mongoose';
 import { USER_MODEL_TOKEN } from '../../server.constants';
 import { IUser } from '../user/interfaces/user.interface';
-import { IToken } from './interfaces/token.interface';
+import { tokenDTO } from './dto/token.dto';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +12,7 @@ export class AuthService {
     @InjectModel(USER_MODEL_TOKEN) private readonly userModel: Model<IUser>,
   ) {}
 
-  async createToken(user: any): Promise<IToken> {
+  async createToken(user: any): Promise<tokenDTO> {
     const expiresIn: string = '48h';
     const token: string = sign(
       {

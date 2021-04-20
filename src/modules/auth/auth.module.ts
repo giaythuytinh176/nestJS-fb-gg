@@ -33,7 +33,7 @@ import { SessionSerializer } from './session.serializer';
     GoogleStrategy,
     LocalStrategy,
     JwtStrategy,
-    SessionSerializer,
+    // SessionSerializer,
   ],
   exports: [],
 })
@@ -44,7 +44,7 @@ export class AuthModule implements NestModule {
         bodyValidatorMiddleware,
         authenticate('local-signup', { session: false }),
       )
-      .forRoutes('auth/local/signup');
+      .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST });
 
     // // google Login
     // consumer

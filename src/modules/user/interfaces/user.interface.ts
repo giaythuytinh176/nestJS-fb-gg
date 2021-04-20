@@ -1,6 +1,8 @@
 import { Document } from 'mongoose';
 
-export interface IUser extends Document {
+export class IUser extends Document {
+  // _id: object;
+  // __v: number;
   method: string;
   local: {
     email: string;

@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { authUserSchema } from '../../user/joi/auth-user.joi';
-import * as Joi from 'joi';
-import { string } from 'joi';
 
 @Injectable()
 export class bodyValidatorMiddleware implements NestMiddleware {

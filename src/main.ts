@@ -1,7 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import * as dotenv from 'dotenv';
 import { Logger, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {
+  DocumentBuilder,
+  SwaggerDocumentOptions,
+  SwaggerModule,
+} from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as compression from 'compression';
 import * as passport from 'passport';
@@ -33,18 +37,23 @@ async function bootstrap() {
 
   app.enableCors();
 
-  // app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe());
 
   // app.useGlobalFilters(new DispatchError());
 
-  const options = new DocumentBuilder()
+  const config = new DocumentBuilder()
     .setTitle('API Login')
     .setDescription('Simple login Facebook Google')
     .setVersion('1.0')
+    .addTag('users')
     .addBearerAuth()
     .build();
 
-  const document = SwaggerModule.createDocument(app, options);
+  const options: SwaggerDocumentOptions = {
+    operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
+  };
+
+  const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
 
   // const options = new DocumentBuilder()
