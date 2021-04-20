@@ -7,11 +7,16 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { string } from 'joi';
 
 export class CreateUserDTO {
   @IsString()
   @IsEmail()
-  @ApiProperty({ example: 'test12345@gmail.com', description: 'Your email' })
+  @ApiProperty({
+    type: string,
+    example: 'test12345@gmail.com',
+    description: 'Your email',
+  })
   email: string;
 
   @IsString()
@@ -20,6 +25,10 @@ export class CreateUserDTO {
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
     message: 'password too weak',
   })
-  @ApiProperty({ example: '1@wERSD$', description: 'Your password' })
+  @ApiProperty({
+    type: string,
+    example: '1@wERSD$',
+    description: 'Your password',
+  })
   password: string;
 }

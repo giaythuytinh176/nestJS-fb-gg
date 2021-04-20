@@ -1,4 +1,10 @@
-import { Injectable, UnauthorizedException, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  Inject,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Model } from 'mongoose';
 import { use } from 'passport';
 import { Strategy } from 'passport-local';
@@ -27,6 +33,7 @@ export class LocalStrategy {
           passwordField: 'password',
         },
         async (email: string, password: string, done: Function) => {
+          email = email.toLowerCase();
           try {
             if (await this.userModel.findOne({ 'local.email': email })) {
               return done(
@@ -48,8 +55,8 @@ export class LocalStrategy {
             await user.save();
 
             done(null, user);
-          } catch (error) {
-            done(error, false);
+          } catch (e) {
+            done(e, false);
           }
         },
       ),
