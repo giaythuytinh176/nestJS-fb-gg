@@ -38,7 +38,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
       const user: IUser = new this.userModel({
         method: 'google',
-        roles: ['user'],
         google: {
           id: profile.id,
           email: profile.emails ? profile.emails[0].value : undefined,

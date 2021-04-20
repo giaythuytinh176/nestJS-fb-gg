@@ -21,9 +21,7 @@ import { UserService } from './user.service';
 export class UserController {
   private logger = new Logger('UsersController');
 
-  constructor(
-    private readonly userService: UserService
-    ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get All Users' })

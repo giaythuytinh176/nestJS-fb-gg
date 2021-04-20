@@ -4,8 +4,7 @@ import { UserModule } from './modules/user/user.module';
 import * as dotenv from 'dotenv';
 import { AuthModule } from './modules/auth/auth.module';
 import { checkUserMiddleware } from './modules/auth/middlewares/checkUser.middleware';
-// import { ConsoleModule } from 'nestjs-console';
-import { ConsoleModule } from '@squareboat/nest-console';
+import { ConsoleModule } from 'nestjs-console';
 
 dotenv.config();
 
