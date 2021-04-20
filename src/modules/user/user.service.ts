@@ -49,7 +49,7 @@ export class UserService {
     if (result.error) {
       const errorMessage = result.error.details.shift().message;
       const message: string = errorMessage.replace(/["]/g, '');
-      console.log(new BadRequestException(`Validation failed: ${message}`));
+      console.log(`Validation failed: ${message}`);
       return;
     }
     return await this.signUp(createUserDto);
@@ -88,7 +88,7 @@ export class UserService {
 
     try {
       if (await this.userModel.findOne({ 'local.email': email })) {
-        console.log(new UnauthorizedException(MESSAGES.UNAUTHORIZED_EMAIL_IN_USE));
+        console.log(MESSAGES.UNAUTHORIZED_EMAIL_IN_USE);
         return;
       }
 
@@ -101,9 +101,7 @@ export class UserService {
           hashedPassword: generateHashedPassword(salt, createUserDto.password),
         },
       });
-      console.log('user', user);
-
-      await user.save();
+      console.log(await user.save());
     } catch (e) {
       console.log(new InternalServerErrorException());
     }
@@ -112,7 +110,13 @@ export class UserService {
   async getUsers(): Promise<IUser[]> {
     return this.userModel.find(
       {},
-      { method: 1, email: 1, 'local.email': 1, 'facebook.email': 1, 'google.email': 1 },
+      {
+        method: 1,
+        email: 1,
+        'local.email': 1,
+        'facebook.email': 1,
+        'google.email': 1,
+      },
     );
   }
 }
