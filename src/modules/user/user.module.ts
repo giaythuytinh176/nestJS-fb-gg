@@ -8,6 +8,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConsoleModule } from 'nestjs-console';
 import { USER_MODEL_TOKEN } from '../../server.constants';
 import { checkUserMiddleware } from '../auth/middlewares/checkUser.middleware';
+import { UserConsole } from '../console/user.console';
 import { UserSchema } from './schemas/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -18,7 +19,7 @@ import { UserService } from './user.service';
     MongooseModule.forFeature([{ name: USER_MODEL_TOKEN, schema: UserSchema }]),
   ],
   controllers: [UserController],
-  providers: [UserService],
+  providers: [UserService, UserConsole],
   exports: [],
 })
 export class UserModule implements NestModule {
