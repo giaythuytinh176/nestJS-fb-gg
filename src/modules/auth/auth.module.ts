@@ -18,7 +18,6 @@ import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt.strategy';
 import { LocalStrategy } from './passport/local.strategy';
-import { SessionSerializer } from './session.serializer';
 
 @Module({
   imports: [
@@ -33,7 +32,6 @@ import { SessionSerializer } from './session.serializer';
     GoogleStrategy,
     LocalStrategy,
     JwtStrategy,
-    // SessionSerializer,
   ],
   exports: [],
 })
