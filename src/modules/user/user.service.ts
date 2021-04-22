@@ -26,15 +26,25 @@ export class UserService {
   ) {}
 
   async getUsers(): Promise<IUser[]> {
-    return this.userModel.find(
-      {},
+    return this.userModel.aggregate([
       {
-        method: 1,
-        email: 1,
-        'local.email': 1,
-        'facebook.email': 1,
-        'google.email': 1,
+        $project: {
+          _id: 0,
+          email_local: '$local.email',
+          email_google: '$google.email',
+          email_facebook: '$facebook.email',
+        },
       },
-    );
+    ]);
+    // return this.userModel.find(
+    //   {},
+    //   {
+    //     method: 1,
+    //     email: 1,
+    //     'local.email': 1,
+    //     'facebook.email': 1,
+    //     'google.email': 1,
+    //   },
+    // );
   }
 }

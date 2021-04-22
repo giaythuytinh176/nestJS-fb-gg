@@ -9,15 +9,12 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Command, ConsoleService } from 'nestjs-console';
-import {
-  generateHashedPassword,
-  generateSalt,
-} from '../../utilities/encryption';
-import { MESSAGES, USER_MODEL_TOKEN } from '../../server.constants';
+import { generateHashedPassword, generateSalt } from '../utilities/encryption';
+import { MESSAGES, USER_MODEL_TOKEN } from '../server.constants';
 import commander from 'commander';
-import { authUserSchema } from '../user/joi/auth-user.joi';
-import { IUser } from '../user/interfaces/user.interface';
-import { CreateUserDTO } from '../user/dto/create-user.dto';
+import { authUserSchema } from '../modules/user/joi/auth-user.joi';
+import { IUser } from '../modules/user/interfaces/user.interface';
+import { CreateUserDTO } from '../modules/user/dto/create-user.dto';
 
 @Injectable()
 export class UserConsole {
@@ -84,7 +81,7 @@ export class UserConsole {
         },
       });
       await user.save();
-      console.log('user created successfully', user.local.email);
+      console.log('User created successfully', user.local.email);
     } catch (e) {
       console.log(new InternalServerErrorException());
     }

@@ -7,8 +7,7 @@ import {
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConsoleModule } from 'nestjs-console';
 import { USER_MODEL_TOKEN } from '../../server.constants';
-import { checkUserMiddleware } from '../auth/middlewares/checkUser.middleware';
-import { UserConsole } from '../console/user.console';
+import { UserConsole } from '../../console/user.console';
 import { UserSchema } from './schemas/user.schema';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
@@ -24,8 +23,8 @@ import { UserService } from './user.service';
 })
 export class UserModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(checkUserMiddleware)
-    //   .forRoutes({ path: '/user', method: RequestMethod.ALL });
+    consumer
+      .apply()
+      .forRoutes({ path: '/user', method: RequestMethod.GET });
   }
 }
