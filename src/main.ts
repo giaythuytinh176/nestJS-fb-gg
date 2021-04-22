@@ -8,9 +8,6 @@ import {
 } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as compression from 'compression';
-import * as passport from 'passport';
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
 import * as cors from 'cors';
 
 dotenv.config();
@@ -33,14 +30,17 @@ async function bootstrap() {
   // );
   // app.use(passport.initialize());
   // app.use(passport.session());
+  app.use(cors()); // Use this after the variable declaration
 
   app.use(compression());
 
-  app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
 
   app.useGlobalPipes(new ValidationPipe());
-
-  app.use(cors());
 
   // app.useGlobalFilters(new DispatchError());
 

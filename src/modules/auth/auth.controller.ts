@@ -19,10 +19,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Request } from 'express';
 import { tokenDTO } from './dto/token.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
-import { IUser } from '../user/interfaces/user.interface';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -51,6 +49,9 @@ export class AuthController {
   }
 
   @Get('/facebook')
+  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
+  // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   @ApiResponse({
     status: 500,
     description: 'This authorization code has been used.',
@@ -63,6 +64,9 @@ export class AuthController {
   }
 
   @Get('/facebook/callback')
+  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
+  // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
   @UseGuards(AuthGuard('facebook'))
   async facebookLoginRedirect(@Req() req: any): Promise<any> {
     return {
@@ -73,9 +77,7 @@ export class AuthController {
 
   @Get('/google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {
-    return;
-  }
+  async googleAuth() {}
 
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
