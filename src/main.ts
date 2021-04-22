@@ -15,7 +15,7 @@ declare const module: any;
 
 async function bootstrap() {
   const logger = new Logger('bootstrap');
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   // // somewhere in your initialization file
   // app.use(cookieParser());
