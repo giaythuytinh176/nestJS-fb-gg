@@ -41,7 +41,7 @@ export class AuthController {
     description: 'The record has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 409, description: 'Conflict.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 422, description: 'Entity Validation Error.' })
   async requestJsonWebTokenAfterLocalSignUp(
