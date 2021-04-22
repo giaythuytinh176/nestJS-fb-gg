@@ -1,19 +1,6 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Logger,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { CreateUserDTO } from './dto/create-user.dto';
+import { Controller, Get, Logger, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { IUser } from './interfaces/user.interface';
 import { UserService } from './user.service';
 
@@ -24,6 +11,8 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Get All Users' })
   @ApiResponse({
     status: 200,
@@ -35,16 +24,4 @@ export class UserController {
     this.logger.verbose(`retrieving all users.`);
     return this.userService.getUsers();
   }
-
-  // @UseGuards(AuthenticatedGuard)
-  // @Get('/home')
-  // getHome(@Request() req) {
-  //   return { user: req.user };
-  // }
-
-  // @UseGuards(AuthenticatedGuard)
-  // @Get('/profile')
-  // getProfile(@Request() req) {
-  //   return { user: req.user };
-  // }
 }

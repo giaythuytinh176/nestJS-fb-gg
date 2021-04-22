@@ -5,7 +5,6 @@ import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { Model } from 'mongoose';
 import { IUser } from '../../user/interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
-import * as passport from 'passport';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
@@ -33,7 +32,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
       });
 
       if (existingUser) {
-        return done(null, existingUser);
+        done(null, existingUser);
       }
 
       const user: IUser = new this.userModel({

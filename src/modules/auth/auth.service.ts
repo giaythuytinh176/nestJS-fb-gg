@@ -13,7 +13,7 @@ export class AuthService {
   ) {}
 
   async createToken(user: any): Promise<tokenDTO> {
-    const expiresIn: string = '48h';
+    const expiresIn = '48h';
     const token: string = sign(
       {
         sub: user.id,
@@ -31,7 +31,7 @@ export class AuthService {
     return await this.userModel.findById(id);
   }
 
-  googleLogin(req) {
+  async googleLogin(req) {
     if (!req.user) {
       return 'No user from google';
     }

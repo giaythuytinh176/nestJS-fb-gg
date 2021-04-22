@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import * as passport from 'passport';
 import { authenticate } from 'passport';
 import { USER_MODEL_TOKEN } from '../../server.constants';
 import { UserSchema } from '../user/schemas/user.schema';
@@ -16,7 +15,7 @@ import { AuthService } from './auth.service';
 import { bodyValidatorMiddleware } from './middlewares/body-validator.middleware';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
-import { JwtStrategy } from './passport/jwt.strategy';
+import { JwtStrategy } from './passport/jwt-strategy';
 import { LocalStrategy } from './passport/local.strategy';
 
 @Module({
@@ -33,7 +32,7 @@ import { LocalStrategy } from './passport/local.strategy';
     LocalStrategy,
     JwtStrategy,
   ],
-  exports: [],
+  exports: [AuthService],
 })
 export class AuthModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {

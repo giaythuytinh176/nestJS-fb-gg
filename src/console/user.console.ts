@@ -1,17 +1,9 @@
-import {
-  BadRequestException,
-  ConflictException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Command, ConsoleService } from 'nestjs-console';
+import { ConsoleService } from 'nestjs-console';
 import { generateHashedPassword, generateSalt } from '../utilities/encryption';
 import { MESSAGES, USER_MODEL_TOKEN } from '../server.constants';
-import commander from 'commander';
 import { authUserSchema } from '../modules/user/joi/auth-user.joi';
 import { IUser } from '../modules/user/interfaces/user.interface';
 import { CreateUserDTO } from '../modules/user/dto/create-user.dto';

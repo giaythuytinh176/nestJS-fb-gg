@@ -6,9 +6,7 @@ import {
   Logger,
   Post,
   Req,
-  UseFilters,
   UseGuards,
-  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
@@ -43,7 +41,7 @@ export class AuthController {
     description: 'The record has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 409, description: 'Conflict.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 422, description: 'Entity Validation Error.' })
   async requestJsonWebTokenAfterLocalSignUp(
@@ -80,11 +78,13 @@ export class AuthController {
 
   @Get('/google')
   @UseGuards(AuthGuard('google'))
-  async googleAuth(@Req() req) {}
+  async googleAuth() {
+    return;
+  }
 
   @Get('/google/callback')
   @UseGuards(AuthGuard('google'))
-  googleAuthRedirect(@Req() req) {
+  async googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req);
   }
 }

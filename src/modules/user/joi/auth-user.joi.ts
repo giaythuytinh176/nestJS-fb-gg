@@ -1,4 +1,4 @@
-import { object, ObjectSchema, string } from 'joi';
+import { ObjectSchema, string } from 'joi';
 import * as Joi from 'joi';
 
 export const authUserSchema: ObjectSchema = Joi.object({

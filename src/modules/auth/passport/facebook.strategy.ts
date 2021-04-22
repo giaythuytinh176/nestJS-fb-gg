@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
-import * as passport from 'passport';
 import { Profile, Strategy } from 'passport-facebook';
 import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { IUser } from '../../user/interfaces/user.interface';

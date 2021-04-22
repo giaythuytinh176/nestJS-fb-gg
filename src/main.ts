@@ -19,19 +19,19 @@ async function bootstrap() {
   const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
 
-  // somewhere in your initialization file
-  app.use(cookieParser());
+  // // somewhere in your initialization file
+  // app.use(cookieParser());
 
-  // somewhere in your initialization file
-  app.use(
-    session({
-      secret: 'my-secret-Tam-le-opentechiz',
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
+  // // somewhere in your initialization file
+  // app.use(
+  //   session({
+  //     secret: 'my-secret-Tam-le-opentechiz',
+  //     resave: false,
+  //     saveUninitialized: false,
+  //   }),
+  // );
+  // app.use(passport.initialize());
+  // app.use(passport.session());
 
   app.use(compression());
 
@@ -55,24 +55,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config, options);
   SwaggerModule.setup('api', app, document);
-
-  // const options = new DocumentBuilder()
-  //   .setTitle('User Login FBGG Application')
-  //   .setDescription('APIs for the User Login FBGG')
-  //   .setVersion('1.0')
-  //   .addTag('nestjs')
-  //   .addBearerAuth(
-  //     {
-  //       type: 'http',
-  //       scheme: 'bearer',
-  //       bearerFormat: 'JWT',
-  //       in: 'header'
-  //     },
-  //     'accessToken'
-  //   )
-  //   .build();
-  // const document = SwaggerModule.createDocument(app, options);
-  // SwaggerModule.setup('api', app, document);
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
