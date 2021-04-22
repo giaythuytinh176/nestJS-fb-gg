@@ -11,6 +11,7 @@ import * as compression from 'compression';
 import * as passport from 'passport';
 import * as cookieParser from 'cookie-parser';
 import * as session from 'express-session';
+import * as cors from 'cors';
 
 dotenv.config();
 declare const module: any;
@@ -38,6 +39,8 @@ async function bootstrap() {
   app.enableCors();
 
   app.useGlobalPipes(new ValidationPipe());
+
+  app.use(cors());
 
   // app.useGlobalFilters(new DispatchError());
 

@@ -22,6 +22,7 @@ import {
 import { Request } from 'express';
 import { tokenDTO } from './dto/token.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
+import { IUser } from '../user/interfaces/user.interface';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -45,18 +46,8 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 422, description: 'Entity Validation Error.' })
-  @Header('Access-Control-Allow-Origin:', '*')
-  @Header('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With')
-  @Header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT')
-  async requestJsonWebTokenAfterLocalSignUp(
-    @Body() createUserDto: CreateUserDTO,
-    @Req() req: Request,
-  ): Promise<tokenDTO> {
-    this.logger.verbose(
-      `Creating a new user. Data: ${JSON.stringify(createUserDto)}`,
-    );
-
-    return await this.authService.createToken(req.user);
+  signUp(@Body() createUserDto: CreateUserDTO): Promise<tokenDTO> {
+    return this.authService.signUp(createUserDto);
   }
 
   @Get('/facebook')

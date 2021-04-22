@@ -6,17 +6,14 @@ import {
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
-import { authenticate } from 'passport';
 import { USER_MODEL_TOKEN } from '../../server.constants';
 import { UserSchema } from '../user/schemas/user.schema';
-import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { bodyValidatorMiddleware } from './middlewares/body-validator.middleware';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt-strategy';
-import { LocalStrategy } from './passport/local.strategy';
 
 @Module({
   imports: [
@@ -25,22 +22,13 @@ import { LocalStrategy } from './passport/local.strategy';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    FacebookStrategy,
-    GoogleStrategy,
-    LocalStrategy,
-    JwtStrategy,
-  ],
+  providers: [AuthService, FacebookStrategy, GoogleStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(
-        bodyValidatorMiddleware,
-        authenticate('local-signup', { session: false }),
-      )
+      .apply(bodyValidatorMiddleware)
       .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST });
 
     // // google Login
