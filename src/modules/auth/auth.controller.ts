@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Header,
   HttpStatus,
   Logger,
   Post,
@@ -44,6 +45,9 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 422, description: 'Entity Validation Error.' })
+  @Header('Access-Control-Allow-Origin:', '*')
+  @Header('Access-Control-Allow-Headers', 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With')
+  @Header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE,PUT')
   async requestJsonWebTokenAfterLocalSignUp(
     @Body() createUserDto: CreateUserDTO,
     @Req() req: Request,
