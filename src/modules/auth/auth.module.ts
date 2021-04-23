@@ -6,20 +6,20 @@ import {
 } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { authenticate } from 'passport';
 import { USER_MODEL_TOKEN } from '../../server.constants';
 import { UserSchema } from '../user/schemas/user.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { bodyValidatorMiddleware } from './middlewares/body-validator.middleware';
-import { corsMiddleware } from './middlewares/cors.middleware';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt-strategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: USER_MODEL_TOKEN, schema: UserSchema }]),
-    // configure default options for passport
     PassportModule,
   ],
   controllers: [AuthController],
@@ -30,15 +30,19 @@ export class AuthModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(bodyValidatorMiddleware)
-      .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST })
+      .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST });
 
-      .apply(corsMiddleware)
-      .forRoutes({path: 'auth/facebook', method: RequestMethod.GET})
+    // consumer
+    // .apply(corsMiddleware)
+    // .forRoutes({ path: 'auth/facebook', method: RequestMethod.GET })
 
-      .apply(corsMiddleware)
-      .forRoutes({path: 'auth/google', method: RequestMethod.GET})
+    // consumer
+    // .apply(corsMiddleware)
+    // .forRoutes({ path: 'auth/google', method: RequestMethod.GET });
 
-      
+    // consumer
+    // .apply(authenticate('google', { session: false }))
+    // .forRoutes('auth/google/token');
     // // google Login
     // consumer
     //   .apply(

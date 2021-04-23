@@ -14,7 +14,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     super({
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: process.env.FACEBOOK_CALLBACK,
+      callbackURL: 'http://localhost:4200/recipes',
       scope: 'email',
       profileFields: ['emails', 'name', 'id', 'displayName', 'photos'],
       enableProof: true,
@@ -28,15 +28,15 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
+    const existingUser: IUser = await this.userModel.findOne({
+      'facebook.id': profile.id,
+    });
+
+    if (existingUser) {
+      return done(null, existingUser);
+    }
+
     try {
-      const existingUser: IUser = await this.userModel.findOne({
-        'facebook.id': profile.id,
-      });
-
-      if (existingUser) {
-        return done(null, existingUser);
-      }
-
       const user: IUser = new this.userModel({
         method: 'facebook',
         facebook: {

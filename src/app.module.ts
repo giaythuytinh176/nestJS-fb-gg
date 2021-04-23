@@ -11,9 +11,9 @@ dotenv.config();
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'),
-    }),
+    // ServeStaticModule.forRoot({
+    //   rootPath: join(__dirname, '..', 'client'),
+    // }),
     ConsoleModule,
     AuthModule,
     UserModule,
