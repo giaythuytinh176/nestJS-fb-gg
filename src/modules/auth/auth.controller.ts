@@ -81,7 +81,9 @@ export class AuthController {
   @Get('/google')
   @ApiExcludeEndpoint()
   @UseGuards(AuthGuard('google'))
-  async googleAuth() {}
+  async googleAuth() {
+    return;
+  }
 
   @Get('/google/callback')
   @ApiExcludeEndpoint()

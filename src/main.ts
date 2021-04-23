@@ -39,9 +39,9 @@ async function bootstrap() {
       'Authorization',
       'Origin',
       'x-access-token',
-      'XSRF-TOKEN'
+      'XSRF-TOKEN',
     ],
-    preflightContinue: false
+    preflightContinue: false,
   });
 
   app.use(compression());
