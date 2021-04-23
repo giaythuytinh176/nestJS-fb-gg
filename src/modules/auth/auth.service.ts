@@ -23,7 +23,7 @@ import { IToken } from './interfaces/token.interface';
 export class AuthService {
   constructor(
     @InjectModel(USER_MODEL_TOKEN) private readonly userModel: Model<IUser>,
-  ) {}
+  ) { }
 
   async signUp(createUserDto: CreateUserDTO): Promise<tokenDTO> {
     const { email: email, password: password } = createUserDto;
@@ -63,17 +63,6 @@ export class AuthService {
     return await this.userModel.findById(id);
   }
 
-  async googleLogin(req) {
-    if (!req.user) {
-      return 'No user from google';
-    }
-
-    return {
-      message: 'User information from google',
-      user: req.user,
-    };
-  }
-
   async googleSignIn(code: string): Promise<any> {
     return new Promise((resolve: Function, reject: Function) => {
       post(
@@ -105,15 +94,6 @@ export class AuthService {
             {
               url: `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${access_token}`,
             },
-            // {
-            //   url: `http://localhost:3000/auth/google/token`,
-            //   headers: {
-            //     'Content-Type': 'application/x-www-form-urlencoded',
-            //   },
-            //   form: {
-            //     access_token,
-            //   },
-            // },
             async (err: Error, res: Response, body: any) => {
               // console.log('err', err);
               // console.log('res', res);
@@ -128,39 +108,104 @@ export class AuthService {
                 return reject(body.error);
               }
 
+              if (!access_token) {
+                return reject('Access token not found');
+              }
+
+              if (!body.sub) {
+                return reject('Account not found');
+              }
+
               const token = await this.createGoogle(body, access_token);
-              // post(
-              //   {
-              //     url: `http://localhost:3000/auth/google/token`,
-              //     headers: {
-              //       'Content-Type': 'application/x-www-form-urlencoded',
-              //     },
-              //     form: {
-              //       user: body,
-              //     },
-              //   },
-              //   async (err: Error, res: Response, body: any) => {
-              //     // console.log('err', err);
-              //     // console.log('res', res);
-              //     // console.log('body', body);
 
-              //     if (err) {
-              //       return reject(err);
-              //     }
-
-              //     if (body.error) {
-              //       return reject(body.error);
-              //     }
-
-              //     resolve(body);
-              //   },
-              // );
               resolve({ body, token });
             },
           );
         },
       );
     });
+  }
+
+
+  async facebookSignIn(code: string): Promise<any> {
+    const queryParams: string[] = [
+      `client_id=${process.env.FACEBOOK_APP_ID}`,
+      `redirect_uri=http://localhost:4200/recipes`,
+      `client_secret=${process.env.FACEBOOK_APP_SECRET}`,
+      `code=${code}`
+    ];
+    const uri: string = `https://graph.facebook.com/v2.12/oauth/access_token?${queryParams.join('&')}`;
+
+    return new Promise((resolve: Function, reject: Function) => {
+      get(uri, (error: Error, response: Response, body: any) => {
+        if (error) {
+          return reject(error);
+        }
+
+        if (body.error) {
+          return reject(body.error);
+        }
+
+        const { access_token } = JSON.parse(body);
+
+        post({
+          url: `https://graph.facebook.com/me?fields=email,name&access_token=${access_token}`,
+        }, async (err: Error, res: Response, body: any) => {
+          if (err) {
+            return reject(err);
+          }
+
+          if (body.error) {
+            return reject(body.error);
+          }
+          // console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', err);
+          // console.log('ressssssssssssssssssssssssssssssss', res);
+          // console.log('bodyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', JSON.parse(body));
+          const bd = JSON.parse(body);
+
+          if (!access_token) {
+            return reject('Access token not found');
+          }
+
+          if (!bd.id) {
+            return reject('Account not found');
+          }
+
+          const token = await this.createFacebook(bd, access_token);
+
+          resolve({ body: bd, token });
+        });
+      });
+    });
+  }
+
+
+  async createFacebook(body: any, access_token: IToken): Promise<any> {
+    const existingUser: IUser = await this.userModel.findOne({
+      'google.id': body.id,
+    });
+
+    if (existingUser) {
+      return await this.createToken(existingUser);
+      // return existingUser;
+    }
+
+    try {
+      const user: IUser = new this.userModel({
+        method: 'facebook',
+        google: {
+          id: body.id,
+          email: body.email ? body.email : undefined,
+          displayName: body.name,
+          token: access_token,
+        },
+      });
+
+      await user.save();
+      return await this.createToken(user);
+    } catch (err) {
+      throw new InternalServerErrorException();
+    }
   }
 
   async createGoogle(body: any, access_token: IToken): Promise<any> {
@@ -192,20 +237,6 @@ export class AuthService {
   }
 
   async createToken(user: IUser): Promise<IToken> {
-    const expiresIn: string = '48h';
-    const token: string = sign(
-      {
-        sub: user.id,
-      },
-      process.env.jwtSecret,
-      { expiresIn },
-    );
-    return {
-      token,
-    };
-  }
-
-  async createToken1(user: IUser): Promise<tokenDTO> {
     const expiresIn = '48h';
     const token: string = sign(
       {
@@ -214,9 +245,9 @@ export class AuthService {
       process.env.jwtSecret,
       { expiresIn },
     );
-
     return {
       token,
     };
   }
+
 }

@@ -1,12 +1,11 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { use } from 'passport';
 
 import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { IUser } from '../../user/interfaces/user.interface';
-
-const GoogleTokenStrategy = require('passport-google-plus-token');
+import * as GoogleTokenStrategy from 'passport-google-plus-token';
 
 @Injectable()
 export class GoogleStrategy1 {

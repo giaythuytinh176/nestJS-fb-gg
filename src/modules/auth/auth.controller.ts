@@ -33,7 +33,7 @@ import { Request } from 'express';
 export class AuthController {
   private logger = new Logger('UsersController');
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('local/signup')
   @ApiOperation({ summary: 'Create user' })
@@ -52,24 +52,20 @@ export class AuthController {
   }
 
   @Get('/facebook')
-  @ApiExcludeEndpoint()
-  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
-  // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-  // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  @ApiResponse({
-    status: 500,
-    description: 'This authorization code has been used.',
-  })
+  // @ApiExcludeEndpoint()
+  // @ApiResponse({
+  //   status: 500,
+  //   description: 'This authorization code has been used.',
+  // })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'Not Found.' })
-  // @UseGuards(AuthGuard('facebook'))
   async facebookLogin(): Promise<any> {
     const queryParams: string[] = [
       `client_id=${process.env.FACEBOOK_APP_ID}`,
       `redirect_uri=http://localhost:4200/recipes`,
       `state={fbstate}`,
     ];
-    const redirect_uri: string = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join(
+    const redirect_uri = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join(
       '&',
     )}`;
 
@@ -78,21 +74,18 @@ export class AuthController {
     };
   }
 
-  @Get('/facebook/callback')
-  @ApiExcludeEndpoint()
-  // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
-  // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-  // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-  @UseGuards(AuthGuard('facebook'))
-  async facebookLoginRedirect(@Req() req: any): Promise<any> {
-    return {
-      statusCode: HttpStatus.OK,
-      data: req.user,
-    };
-  }
+  // @Get('/facebook/callback')
+  // @ApiExcludeEndpoint()
+  // @UseGuards(AuthGuard('facebook'))
+  // async facebookLoginRedirect(@Req() req: any): Promise<any> {
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     data: req.user,
+  //   };
+  // }
 
   @Get('/google')
-  @ApiExcludeEndpoint()
+  // @ApiExcludeEndpoint()
   // @UseGuards(AuthGuard('google'))
   async googleAuth() {
     const queryParams: string[] = [
@@ -103,7 +96,7 @@ export class AuthController {
       //`scope=openid`,
       `scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`,
     ];
-    const redirect_uri: string = `https://accounts.google.com/o/oauth2/auth?${queryParams.join(
+    const redirect_uri = `https://accounts.google.com/o/oauth2/auth?${queryParams.join(
       '&',
     )}`;
 
@@ -112,7 +105,7 @@ export class AuthController {
     };
   }
 
-  @Post('/google/signin')
+  @Post('google/signin')
   async googleSignIn(@Req() req: any): Promise<any> {
     return await this.authService.googleSignIn(req.body.code);
   }
@@ -122,10 +115,30 @@ export class AuthController {
     return await this.authService.createToken(req.body.user);
   }
 
-  @Get('/google/callback')
-  @ApiExcludeEndpoint()
-  @UseGuards(AuthGuard('google'))
-  async googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req);
+  @Get('facebook/uri')
+  async requestFacebookRedirectUrl(): Promise<{ redirect_uri: string }> {
+    const queryParams: string[] = [
+      `client_id=${process.env.FACEBOOK_APP_ID}`,
+      `redirect_uri=http://localhost:4200/recipes`,
+      `state={fbstate}`
+    ];
+    const redirect_uri: string = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join('&')}`;
+
+    return {
+      redirect_uri
+    };
   }
+
+  @Post('facebook/token')
+  // @UseGuards(AuthGuard('facebook'))
+  async requestJsonWebTokenAfterFacebookSignIn(@Req() req: any): Promise<IToken> {
+    return await this.authService.createToken(req.body.user);
+  }
+
+
+  @Post('facebook/signin')
+  async facebookSignIn(@Req() req: Request): Promise<IToken> {
+    return await this.authService.facebookSignIn(req.body.code);
+  }
+
 }
