@@ -32,25 +32,25 @@ async function bootstrap() {
   // app.use(passport.session());
   // app.use(cors()); // Use this after the variable declaration
   cors({
-    origin: 'http://localhost:4200',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'Origin',
-      'x-access-token',
-      'XSRF-TOKEN',
-    ],
-    preflightContinue: false,
+    origin: '*',
+    // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    // allowedHeaders: [
+    //   'Content-Type',
+    //   'Authorization',
+    //   'Origin',
+    //   'x-access-token',
+    //   'XSRF-TOKEN',
+    // ],
+    // preflightContinue: false,
   });
 
   app.use(compression());
 
   app.enableCors({
-    "origin": "*",
-    "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    "preflightContinue": false,
-    "optionsSuccessStatus": 204
+    origin: '*',
+    // "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    // "preflightContinue": false,
+    // "optionsSuccessStatus": 204
   });
 
   app.useGlobalPipes(new ValidationPipe());

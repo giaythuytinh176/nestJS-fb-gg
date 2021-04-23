@@ -22,6 +22,8 @@ import {
 } from '@nestjs/swagger';
 import { tokenDTO } from './dto/token.dto';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
+import { IToken } from './interfaces/token.interface';
+import { Request } from 'express';
 
 @ApiBearerAuth()
 @ApiTags('users')
@@ -60,9 +62,20 @@ export class AuthController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'Not Found.' })
-  @UseGuards(AuthGuard('facebook'))
+  // @UseGuards(AuthGuard('facebook'))
   async facebookLogin(): Promise<any> {
-    return HttpStatus.OK;
+    const queryParams: string[] = [
+      `client_id=${process.env.FACEBOOK_APP_ID}`,
+      `redirect_uri=http://localhost:4200/recipes`,
+      `state={fbstate}`,
+    ];
+    const redirect_uri: string = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join(
+      '&',
+    )}`;
+
+    return {
+      redirect_uri,
+    };
   }
 
   @Get('/facebook/callback')
@@ -80,9 +93,33 @@ export class AuthController {
 
   @Get('/google')
   @ApiExcludeEndpoint()
-  @UseGuards(AuthGuard('google'))
+  // @UseGuards(AuthGuard('google'))
   async googleAuth() {
-    return;
+    const queryParams: string[] = [
+      `client_id=${process.env.GOOGLE_CLIENT_ID}`,
+      `redirect_uri=http://localhost:4200/recipes`,
+      `response_type=code`,
+      //`scope=https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read`,
+      //`scope=openid`,
+      `scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`,
+    ];
+    const redirect_uri: string = `https://accounts.google.com/o/oauth2/auth?${queryParams.join(
+      '&',
+    )}`;
+
+    return {
+      redirect_uri,
+    };
+  }
+
+  @Post('/google/signin')
+  async googleSignIn(@Req() req: any): Promise<any> {
+    return await this.authService.googleSignIn(req.body.code);
+  }
+
+  @Post('google/token')
+  async requestJsonWebTokenAfterGoogleSignIn(@Req() req: any): Promise<IToken> {
+    return await this.authService.createToken(req.body.user);
   }
 
   @Get('/google/callback')

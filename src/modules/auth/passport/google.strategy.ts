@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { Model } from 'mongoose';
 import { IUser } from '../../user/interfaces/user.interface';
@@ -14,9 +14,12 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: process.env.GOOGLE_CALLBACK,
+      callbackURL: 'http://localhost:4200/recipes',
       // passReqToCallback: true,
       scope: ['email', 'profile'],
+      prompt: 'select_account',
+      accessType: 'offline',
+      includeGrantedScopes: true,
     });
   }
 
@@ -26,15 +29,16 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
+    console.log('xxx', profile);
+    const existingUser: IUser = await this.userModel.findOne({
+      'google.id': profile.id,
+    });
+
+    if (existingUser) {
+      return existingUser;
+    }
+
     try {
-      const existingUser: IUser = await this.userModel.findOne({
-        'google.id': profile.id,
-      });
-
-      if (existingUser) {
-        done(null, existingUser);
-      }
-
       const user: IUser = new this.userModel({
         method: 'google',
         google: {
@@ -45,9 +49,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
         },
       });
 
-      done(null, await user.save());
+      return await user.save();
     } catch (err) {
-      done(err, null);
+      throw new InternalServerErrorException();
     }
   }
 }
