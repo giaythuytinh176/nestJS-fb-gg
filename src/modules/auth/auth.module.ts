@@ -12,7 +12,6 @@ import { UserSchema } from '../user/schemas/user.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { bodyValidatorMiddleware } from './middlewares/body-validator.middleware';
-import { corsMiddleware } from './middlewares/cors.middleware';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt-strategy';
@@ -21,14 +20,7 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: USER_MODEL_TOKEN, schema: UserSchema }]),
-    // configure default options for passport
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: {
-        expiresIn: '48h',
-      },
-    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, FacebookStrategy, GoogleStrategy, JwtStrategy],

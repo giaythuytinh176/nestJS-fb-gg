@@ -28,7 +28,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-
     const existingUser: IUser = await this.userModel.findOne({
       'facebook.id': profile.id,
     });
@@ -38,7 +37,6 @@ export class FacebookStrategy extends PassportStrategy(Strategy, 'facebook') {
     }
 
     try {
-
       const user: IUser = new this.userModel({
         method: 'facebook',
         facebook: {

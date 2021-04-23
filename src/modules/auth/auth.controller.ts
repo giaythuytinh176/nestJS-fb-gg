@@ -33,7 +33,7 @@ import { Request } from 'express';
 export class AuthController {
   private logger = new Logger('UsersController');
 
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post('local/signup')
   @ApiOperation({ summary: 'Create user' })
@@ -51,29 +51,6 @@ export class AuthController {
     return this.authService.signUp(createUserDto);
   }
 
-  @Get('/facebook')
-  // @ApiExcludeEndpoint()
-  // @ApiResponse({
-  //   status: 500,
-  //   description: 'This authorization code has been used.',
-  // })
-  @ApiResponse({ status: 403, description: 'Forbidden.' })
-  @ApiResponse({ status: 404, description: 'Not Found.' })
-  async facebookLogin(): Promise<any> {
-    const queryParams: string[] = [
-      `client_id=${process.env.FACEBOOK_APP_ID}`,
-      `redirect_uri=http://localhost:4200/recipes`,
-      `state={fbstate}`,
-    ];
-    const redirect_uri = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join(
-      '&',
-    )}`;
-
-    return {
-      redirect_uri,
-    };
-  }
-
   // @Get('/facebook/callback')
   // @ApiExcludeEndpoint()
   // @UseGuards(AuthGuard('facebook'))
@@ -84,13 +61,13 @@ export class AuthController {
   //   };
   // }
 
-  @Get('/google')
+  @Get('google/uri')
   // @ApiExcludeEndpoint()
   // @UseGuards(AuthGuard('google'))
   async googleAuth() {
     const queryParams: string[] = [
       `client_id=${process.env.GOOGLE_CLIENT_ID}`,
-      `redirect_uri=http://localhost:4200/recipes`,
+      `redirect_uri=${process.env.redirect_uri}`,
       `response_type=code`,
       //`scope=https://www.googleapis.com/auth/plus.login https://www.googleapis.com/auth/plus.profile.emails.read`,
       //`scope=openid`,
@@ -99,7 +76,6 @@ export class AuthController {
     const redirect_uri = `https://accounts.google.com/o/oauth2/auth?${queryParams.join(
       '&',
     )}`;
-
     return {
       redirect_uri,
     };
@@ -116,29 +92,37 @@ export class AuthController {
   }
 
   @Get('facebook/uri')
+  // @ApiExcludeEndpoint()
+  // @ApiResponse({
+  //   status: 500,
+  //   description: 'This authorization code has been used.',
+  // })
+  // @ApiResponse({ status: 403, description: 'Forbidden.' })
+  // @ApiResponse({ status: 404, description: 'Not Found.' })
   async requestFacebookRedirectUrl(): Promise<{ redirect_uri: string }> {
     const queryParams: string[] = [
       `client_id=${process.env.FACEBOOK_APP_ID}`,
-      `redirect_uri=http://localhost:4200/recipes`,
-      `state={fbstate}`
+      `redirect_uri=${process.env.redirect_uri}`,
+      `state={fbstate}`,
     ];
-    const redirect_uri: string = `https://www.facebook.com/v2.12/dialog/oauth?${queryParams.join('&')}`;
-
+    const redirect_uri: string = `https://www.facebook.com/v10.0/dialog/oauth?${queryParams.join(
+      '&',
+    )}`;
     return {
-      redirect_uri
+      redirect_uri,
     };
   }
-
-  @Post('facebook/token')
-  // @UseGuards(AuthGuard('facebook'))
-  async requestJsonWebTokenAfterFacebookSignIn(@Req() req: any): Promise<IToken> {
-    return await this.authService.createToken(req.body.user);
-  }
-
 
   @Post('facebook/signin')
   async facebookSignIn(@Req() req: Request): Promise<IToken> {
     return await this.authService.facebookSignIn(req.body.code);
   }
 
+  @Post('facebook/token')
+  // @UseGuards(AuthGuard('facebook'))
+  async requestJsonWebTokenAfterFacebookSignIn(
+    @Req() req: any,
+  ): Promise<IToken> {
+    return await this.authService.createToken(req.body.user);
+  }
 }
