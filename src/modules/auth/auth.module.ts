@@ -11,6 +11,7 @@ import { UserSchema } from '../user/schemas/user.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { bodyValidatorMiddleware } from './middlewares/body-validator.middleware';
+import { corsMiddleware } from './middlewares/cors.middleware';
 import { FacebookStrategy } from './passport/facebook.strategy';
 import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt-strategy';
@@ -29,8 +30,15 @@ export class AuthModule implements NestModule {
   public configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(bodyValidatorMiddleware)
-      .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST });
+      .forRoutes({ path: 'auth/local/signup', method: RequestMethod.POST })
 
+      .apply(corsMiddleware)
+      .forRoutes({path: 'auth/facebook', method: RequestMethod.GET})
+
+      .apply(corsMiddleware)
+      .forRoutes({path: 'auth/google', method: RequestMethod.GET})
+
+      
     // // google Login
     // consumer
     //   .apply(
