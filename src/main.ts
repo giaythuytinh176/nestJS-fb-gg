@@ -30,7 +30,19 @@ async function bootstrap() {
   // );
   // app.use(passport.initialize());
   // app.use(passport.session());
-  app.use(cors()); // Use this after the variable declaration
+  // app.use(cors()); // Use this after the variable declaration
+  cors({
+    origin: 'http://localhost:4200',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'Origin',
+      'x-access-token',
+      'XSRF-TOKEN'
+    ],
+    preflightContinue: false
+  });
 
   app.use(compression());
 

@@ -14,6 +14,7 @@ import { AuthService } from './auth.service';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiExcludeEndpoint,
   ApiOkResponse,
   ApiOperation,
   ApiResponse,
@@ -49,6 +50,7 @@ export class AuthController {
   }
 
   @Get('/facebook')
+  @ApiExcludeEndpoint()
   // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
   // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -64,6 +66,7 @@ export class AuthController {
   }
 
   @Get('/facebook/callback')
+  @ApiExcludeEndpoint()
   // @Header('Access-Control-Allow-Origin', 'http://localhost:4200/login')
   // @Header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   // @Header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
@@ -76,10 +79,12 @@ export class AuthController {
   }
 
   @Get('/google')
+  @ApiExcludeEndpoint()
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
   @Get('/google/callback')
+  @ApiExcludeEndpoint()
   @UseGuards(AuthGuard('google'))
   async googleAuthRedirect(@Req() req) {
     return this.authService.googleLogin(req);
