@@ -57,12 +57,12 @@ export class UserConsole {
   async signUp(createUserDto: CreateUserDTO): Promise<void> {
     const email = createUserDto.email.toLowerCase();
 
-    try {
-      if (await this.userModel.findOne({ 'local.email': email })) {
-        console.log(MESSAGES.UNAUTHORIZED_EMAIL_IN_USE);
-        return;
-      }
+    if (await this.userModel.findOne({ 'local.email': email })) {
+      console.log(MESSAGES.UNAUTHORIZED_EMAIL_IN_USE);
+      return;
+    }
 
+    try {
       const salt: string = generateSalt();
       const user: IUser = new this.userModel({
         method: 'local',
