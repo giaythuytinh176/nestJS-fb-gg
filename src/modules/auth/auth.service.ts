@@ -91,7 +91,13 @@ export class AuthService {
 
           post(
             {
-              url: `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${access_token}`,
+              url: 'http://localhost:3000/auth/google/token',
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+              },
+              form: {
+                access_token,
+              },
             },
             async (err: Error, res: Response, body: any) => {
               if (err) {
@@ -102,51 +108,67 @@ export class AuthService {
                 return reject(body.error);
               }
 
-              if (!access_token) {
-                return reject('Access token not found');
-              }
-
-              const bd = JSON.parse(body);
-
-              if (!bd.sub) {
-                return reject('Account not found');
-              }
-
-              post(
-                {
-                  url: 'https://www.googleapis.com/oauth2/v3/userinfo',
-                  headers: {
-                    Authorization: `Bearer ${access_token}`,
-                  },
-                },
-                async (err: Error, res: Response, body: any) => {
-                  if (err) {
-                    return reject(err);
-                  }
-
-                  if (body.error) {
-                    return reject(body.error);
-                  }
-
-                  if (!access_token) {
-                    return reject('Access token not found');
-                  }
-
-                  const bd1 = JSON.parse(body);
-
-                  if (!bd1.sub) {
-                    return reject('Account not found');
-                  }
-
-                  const token = await this.createGoogleAccount(
-                    bd1,
-                    access_token,
-                  );
-                  resolve({ body, token });
-                },
-              );
+              resolve(body);
             },
           );
+          // post(
+          //   {
+          //     url: `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${access_token}`,
+          //   },
+          //   async (err: Error, res: Response, body: any) => {
+          //     if (err) {
+          //       return reject(err);
+          //     }
+
+          //     if (body.error) {
+          //       return reject(body.error);
+          //     }
+
+          //     if (!access_token) {
+          //       return reject('Access token not found');
+          //     }
+
+          //     const bd = JSON.parse(body);
+
+          //     if (!bd.sub) {
+          //       return reject('Account not found');
+          //     }
+
+          //     post(
+          //       {
+          //         url: 'https://www.googleapis.com/oauth2/v3/userinfo',
+          //         headers: {
+          //           Authorization: `Bearer ${access_token}`,
+          //         },
+          //       },
+          //       async (err: Error, res: Response, body: any) => {
+          //         if (err) {
+          //           return reject(err);
+          //         }
+
+          //         if (body.error) {
+          //           return reject(body.error);
+          //         }
+
+          //         if (!access_token) {
+          //           return reject('Access token not found');
+          //         }
+
+          //         const bd1 = JSON.parse(body);
+
+          //         if (!bd1.sub) {
+          //           return reject('Account not found');
+          //         }
+
+          //         const token = await this.createGoogleAccount(
+          //           bd1,
+          //           access_token,
+          //         );
+          //         resolve({ body, token });
+          //       },
+          //     );
+          //   },
+          // );
         },
       );
     });
@@ -179,6 +201,43 @@ export class AuthService {
     }
   }
 
+  async verifyTokenGoogle(access_token: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      post(
+        {
+          url: 'https://www.googleapis.com/oauth2/v3/userinfo',
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        },
+        async (err: Error, res: Response, body: any) => {
+          if (err) {
+            return reject(err);
+          }
+
+          if (body.error) {
+            return reject(body.error);
+          }
+
+          if (!access_token) {
+            return reject('Access token not found');
+          }
+
+          const bd1 = JSON.parse(body);
+
+          if (!bd1.sub) {
+            return reject('Account not found');
+          }
+
+          const token = await this.createGoogleAccount(bd1, {
+            token: access_token,
+          });
+          resolve({ body, token });
+        },
+      );
+    });
+  }
+
   // https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow?locale=vi_VN
   async facebookSignIn(code: string): Promise<any> {
     const queryParams: string[] = [
@@ -205,7 +264,13 @@ export class AuthService {
 
         post(
           {
-            url: `https://graph.facebook.com/me?fields=id,email,name&access_token=${access_token}`,
+            url: 'http://localhost:3000/auth/facebook/token',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            form: {
+              access_token,
+            },
           },
           async (err: Error, res: Response, body: any) => {
             if (err) {
@@ -215,22 +280,8 @@ export class AuthService {
             if (body.error) {
               return reject(body.error);
             }
-            // console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', err);
-            // console.log('ressssssssssssssssssssssssssssssss', res);
-            // console.log('bodyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', JSON.parse(body));
-            const bd = JSON.parse(body);
 
-            if (!access_token) {
-              return reject('Access token not found');
-            }
-
-            if (!bd.id) {
-              return reject('Account not found');
-            }
-
-            const token = await this.createFacebookAccount(bd, access_token);
-
-            resolve({ body: bd, token });
+            resolve(body);
           },
         );
       });
@@ -262,6 +313,43 @@ export class AuthService {
     } catch (err) {
       throw new InternalServerErrorException();
     }
+  }
+
+  async verifyTokenFacebook(access_token: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      post(
+        {
+          url: `https://graph.facebook.com/me?fields=id,email,name&access_token=${access_token}`,
+        },
+        async (err: Error, res: Response, body: any) => {
+          if (err) {
+            return reject(err);
+          }
+
+          if (body.error) {
+            return reject(body.error);
+          }
+          // console.log('errrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr', err);
+          // console.log('ressssssssssssssssssssssssssssssss', res);
+          // console.log('bodyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy', JSON.parse(body));
+          const bd = JSON.parse(body);
+
+          if (!access_token) {
+            return reject('Access token not found');
+          }
+
+          if (!bd.id) {
+            return reject('Account not found');
+          }
+
+          const token = await this.createFacebookAccount(bd, {
+            token: access_token,
+          });
+
+          resolve({ body: bd, token });
+        },
+      );
+    });
   }
 
   async createToken(user: IUser, method: string = null): Promise<IToken> {

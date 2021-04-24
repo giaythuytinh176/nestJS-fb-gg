@@ -24,7 +24,13 @@ import { GoogleStrategy1 } from './passport/google-plus.strategy';
     PassportModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, FacebookStrategy, GoogleStrategy, JwtStrategy,GoogleStrategy1],
+  providers: [
+    AuthService,
+    FacebookStrategy,
+    GoogleStrategy,
+    JwtStrategy,
+    GoogleStrategy1,
+  ],
   exports: [AuthService],
 })
 export class AuthModule implements NestModule {

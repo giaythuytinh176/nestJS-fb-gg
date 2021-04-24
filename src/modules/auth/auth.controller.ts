@@ -92,7 +92,7 @@ export class AuthController {
 
   @Post('google/token')
   async requestJsonWebTokenAfterGoogleSignIn(@Req() req: any): Promise<IToken> {
-    return await this.authService.createToken(req.body.user);
+    return await this.authService.verifyTokenGoogle(req.body.access_token);
   }
 
   @Get('facebook/uri')
@@ -133,6 +133,6 @@ export class AuthController {
   async requestJsonWebTokenAfterFacebookSignIn(
     @Req() req: any,
   ): Promise<IToken> {
-    return await this.authService.createToken(req.body.user);
+    return await this.authService.verifyTokenFacebook(req.body.access_token);
   }
 }
