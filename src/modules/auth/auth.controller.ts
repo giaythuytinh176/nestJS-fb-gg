@@ -33,7 +33,7 @@ import { Request } from 'express';
 export class AuthController {
   private logger = new Logger('UsersController');
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post('local/signup')
   @ApiOperation({ summary: 'Create user' })
@@ -134,5 +134,14 @@ export class AuthController {
     @Req() req: any,
   ): Promise<IToken> {
     return await this.authService.verifyTokenFacebook(req.body.access_token);
+  }
+
+  @Get('authorized')
+  @UseGuards(AuthGuard('jwt'))
+  public async authorized(
+    @Req() req: any,
+  ): Promise<any> {
+    // console.log(req);
+    return { 'message': req.user };
   }
 }
