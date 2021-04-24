@@ -63,7 +63,7 @@ export class AuthService {
   }
 
   async googleSignIn(code: string): Promise<any> {
-    return new Promise((resolve: Function, reject: Function) => {
+    return new Promise((resolve, reject) => {
       post(
         {
           url: 'https://accounts.google.com/o/oauth2/token',
@@ -187,11 +187,11 @@ export class AuthService {
       `client_secret=${process.env.FACEBOOK_APP_SECRET}`,
       `code=${code}`,
     ];
-    const uri: string = `https://graph.facebook.com/v7.0/oauth/access_token?${queryParams.join(
+    const uri = `https://graph.facebook.com/v7.0/oauth/access_token?${queryParams.join(
       '&',
     )}`;
 
-    return new Promise((resolve: Function, reject: Function) => {
+    return new Promise((resolve, reject) => {
       get(uri, (error: Error, response: Response, body: any) => {
         if (error) {
           return reject(error);

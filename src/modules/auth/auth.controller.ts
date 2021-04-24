@@ -64,6 +64,10 @@ export class AuthController {
   @Get('google/uri')
   // @ApiExcludeEndpoint()
   // @UseGuards(AuthGuard('google'))
+  @ApiResponse({
+    status: 200,
+    description: 'Redirect Url for Google.',
+  })
   async googleAuth() {
     const queryParams: string[] = [
       `client_id=${process.env.GOOGLE_CLIENT_ID}`,
@@ -99,13 +103,17 @@ export class AuthController {
   // })
   // @ApiResponse({ status: 403, description: 'Forbidden.' })
   // @ApiResponse({ status: 404, description: 'Not Found.' })
+  @ApiResponse({
+    status: 200,
+    description: 'Redirect Url for Facebook.',
+  })
   async requestFacebookRedirectUrl(): Promise<{ redirect_uri: string }> {
     const queryParams: string[] = [
       `client_id=${process.env.FACEBOOK_APP_ID}`,
       `redirect_uri=${process.env.redirect_uri}`,
       `state={fbstate}`,
     ];
-    const redirect_uri: string = `https://www.facebook.com/v10.0/dialog/oauth?${queryParams.join(
+    const redirect_uri = `https://www.facebook.com/v10.0/dialog/oauth?${queryParams.join(
       '&',
     )}`;
     return {
@@ -114,11 +122,13 @@ export class AuthController {
   }
 
   @Post('facebook/signin')
+  // @ApiExcludeEndpoint()
   async facebookSignIn(@Req() req: Request): Promise<IToken> {
     return await this.authService.facebookSignIn(req.body.code);
   }
 
   @Post('facebook/token')
+  // @ApiExcludeEndpoint()
   // @UseGuards(AuthGuard('facebook'))
   async requestJsonWebTokenAfterFacebookSignIn(
     @Req() req: any,
