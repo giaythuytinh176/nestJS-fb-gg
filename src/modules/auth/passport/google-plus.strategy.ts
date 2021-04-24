@@ -5,7 +5,7 @@ import { use } from 'passport';
 import { USER_MODEL_TOKEN } from '../../../server.constants';
 import { IUser } from '../../user/interfaces/user.interface';
 
-var GoogleTokenStrategy = require('passport-google-oauth2').Strategy;
+const GoogleTokenStrategy = require('passport-google-oauth2').Strategy;
 
 @Injectable()
 export class GoogleStrategy1 {

@@ -44,7 +44,7 @@ export class AuthService {
 
       await user.save();
 
-      return this.createToken(user);
+      return await this.createToken(user);
     } catch (error) {
       if (
         error.code === '23505' ||
