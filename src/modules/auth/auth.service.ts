@@ -66,7 +66,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       post(
         {
-          url: 'https://accounts.google.com/o/oauth2/token',
+          url: `${process.env.google_token_uri}`,
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
@@ -91,7 +91,7 @@ export class AuthService {
 
           post(
             {
-              url: 'https://backend-tamle.ap.ngrok.io/auth/google/token',
+              url: `${process.env.backend_uri}/auth/google/token`,
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
               },
@@ -147,7 +147,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       post(
         {
-          url: 'https://www.googleapis.com/oauth2/v3/userinfo',
+          url: `${process.env.google_userinfo_uri}`,
           headers: {
             Authorization: `Bearer ${access_token}`,
           },
@@ -187,7 +187,7 @@ export class AuthService {
       `client_secret=${process.env.FACEBOOK_APP_SECRET}`,
       `code=${code}`,
     ];
-    const uri = `https://graph.facebook.com/v7.0/oauth/access_token?${queryParams.join(
+    const uri = `${process.env.facebook_token_uri}?${queryParams.join(
       '&',
     )}`;
 
@@ -205,7 +205,7 @@ export class AuthService {
 
         post(
           {
-            url: 'https://backend-tamle.ap.ngrok.io/auth/facebook/token',
+            url: `${process.env.backend_uri}/auth/facebook/token`,
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },

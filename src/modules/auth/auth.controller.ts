@@ -77,7 +77,7 @@ export class AuthController {
       //`scope=openid`,
       `scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`,
     ];
-    const redirect_uri = `https://accounts.google.com/o/oauth2/auth?${queryParams.join(
+    const redirect_uri = `${process.env.google_auth_uri}?${queryParams.join(
       '&',
     )}`;
     return {
@@ -113,7 +113,7 @@ export class AuthController {
       `redirect_uri=${process.env.redirect_uri}`,
       `state={fbstate}`,
     ];
-    const redirect_uri = `https://www.facebook.com/v10.0/dialog/oauth?${queryParams.join(
+    const redirect_uri = `${process.env.facebook_oauth_uri}?${queryParams.join(
       '&',
     )}`;
     return {
