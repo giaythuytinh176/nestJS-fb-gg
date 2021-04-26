@@ -91,7 +91,7 @@ export class AuthService {
 
           post(
             {
-              url: 'http://localhost:3000/auth/google/token',
+              url: 'https://backend-tamle.ap.ngrok.io/auth/google/token',
               headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
               },
@@ -205,7 +205,7 @@ export class AuthService {
 
         post(
           {
-            url: 'http://localhost:3000/auth/facebook/token',
+            url: 'https://backend-tamle.ap.ngrok.io/auth/facebook/token',
             headers: {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
