@@ -7,7 +7,7 @@ import {
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { authenticate } from 'passport';
-import { USER_MODEL_TOKEN } from '../../server.constants';
+import { DATABASE_CONNECTION, USER_MODEL_TOKEN } from '../../server.constants';
 import { UserSchema } from '../user/schemas/user.schema';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -17,11 +17,13 @@ import { GoogleStrategy } from './passport/google.strategy';
 import { JwtStrategy } from './passport/jwt-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { GoogleStrategy1 } from './passport/google-plus.strategy';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: USER_MODEL_TOKEN, schema: UserSchema }]),
     PassportModule,
+    DatabaseModule,
   ],
   controllers: [AuthController],
   providers: [

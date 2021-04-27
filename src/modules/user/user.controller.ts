@@ -8,7 +8,7 @@ import { UserService } from './user.service';
 export class UserController {
   private logger = new Logger('UsersController');
 
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Get()
   @ApiBearerAuth()
@@ -20,8 +20,8 @@ export class UserController {
   })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @ApiResponse({ status: 404, description: 'Not Found.' })
-  getUsers(): Promise<IUser[]> {
+  async getUsers(): Promise<IUser[]> {
     this.logger.verbose(`retrieving all users.`);
-    return this.userService.getUsers();
+    return await this.userService.getUsers();
   }
 }

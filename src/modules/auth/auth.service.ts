@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -10,41 +11,48 @@ import {
   generateHashedPassword,
   generateSalt,
 } from '../../utilities/encryption';
-import { MESSAGES, USER_MODEL_TOKEN } from '../../server.constants';
+import { DATABASE_CONNECTION, MESSAGES, USER_MODEL_TOKEN } from '../../server.constants';
 import { CreateUserDTO } from '../user/dto/create-user.dto';
 import { IUser } from '../user/interfaces/user.interface';
 import { sign } from 'jsonwebtoken';
 import { tokenDTO } from './dto/token.dto';
 import { get, post, Response } from 'request';
 import { IToken } from './interfaces/token.interface';
+import { Db, ObjectID } from 'mongodb';
 
 @Injectable()
 export class AuthService {
+  dbconnect: any;
+
   constructor(
     @InjectModel(USER_MODEL_TOKEN) private readonly userModel: Model<IUser>,
-  ) { }
+    @Inject(DATABASE_CONNECTION) private db: Db,
+  ) {
+    this.dbconnect = db.collection('users_mongodb');
+  }
 
+  // await this.db.collection('users').insertOne(body);
   async signUp(createUserDto: CreateUserDTO): Promise<tokenDTO> {
     const { email: email, password: password } = createUserDto;
 
-    if (await this.userModel.findOne({ 'local.email': email.toLowerCase() })) {
+    if (await this.dbconnect.findOne({ 'local.email': email.toLowerCase() })) {
       throw new UnauthorizedException(MESSAGES.UNAUTHORIZED_EMAIL_IN_USE);
     }
 
     try {
       const salt: string = generateSalt();
-      const user: IUser = new this.userModel({
+      const user = {
         method: 'local',
         local: {
           email,
           salt,
           hashedPassword: generateHashedPassword(salt, password),
         },
-      });
+      };
 
-      await user.save();
-
-      return await this.createToken(user);
+      const userinfo = await this.dbconnect.insertOne(user);
+      // console.log('userinfo', userinfo);
+      return await this.createToken(userinfo.insertedId);
     } catch (error) {
       if (
         error.code === '23505' ||
@@ -59,7 +67,7 @@ export class AuthService {
   }
 
   async findUserById(id: string): Promise<IUser> {
-    return await this.userModel.findById(id);
+    return await this.dbconnect.findOne({ _id: new ObjectID(id) });
   }
 
   async googleSignIn(code: string): Promise<any> {
@@ -117,16 +125,16 @@ export class AuthService {
   }
 
   async createGoogleAccount(body: any, access_token: IToken): Promise<any> {
-    const existingUser: IUser = await this.userModel.findOne({
+    const existingUser: IUser = await this.dbconnect.findOne({
       'google.id': body.sub,
     });
 
     if (existingUser) {
-      return await this.createToken(existingUser, 'google');
+      return await this.createToken(existingUser._id, 'google');
     }
 
     try {
-      const user: IUser = new this.userModel({
+      const user = {
         method: 'google',
         google: {
           id: body.sub,
@@ -134,10 +142,10 @@ export class AuthService {
           displayName: body.name,
           token: access_token,
         },
-      });
+      };
 
-      await user.save();
-      return await this.createToken(user, 'google');
+      const userinfo = await this.dbconnect.insertOne(user);
+      return await this.createToken(userinfo.insertedId, 'google');
     } catch (err) {
       throw new InternalServerErrorException();
     }
@@ -230,16 +238,16 @@ export class AuthService {
   }
 
   async createFacebookAccount(body: any, access_token: IToken): Promise<any> {
-    const existingUser: IUser = await this.userModel.findOne({
+    const existingUser: IUser = await this.dbconnect.findOne({
       'facebook.id': body.id,
     });
 
     if (existingUser) {
-      return await this.createToken(existingUser, 'facebook');
+      return await this.createToken(existingUser._id, 'facebook');
     }
 
     try {
-      const user: IUser = new this.userModel({
+      const user = {
         method: 'facebook',
         facebook: {
           id: body.id,
@@ -247,10 +255,10 @@ export class AuthService {
           displayName: body.name,
           token: access_token,
         },
-      });
+      };
 
-      await user.save();
-      return await this.createToken(user, 'facebook');
+      const userinfo = await this.dbconnect.insertOne(user);
+      return await this.createToken(userinfo.insertedId, 'facebook');
     } catch (err) {
       throw new InternalServerErrorException();
     }
@@ -289,11 +297,11 @@ export class AuthService {
     });
   }
 
-  async createToken(user: IUser, method: string = null): Promise<IToken> {
+  async createToken(id: string, method: string = null): Promise<IToken> {
     const expiresIn = '48h';
     const token: string = sign(
       {
-        sub: user.id,
+        sub: id,
       },
       process.env.jwtSecret,
       { expiresIn },

@@ -6,6 +6,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConsoleModule } from 'nestjs-console';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { DatabaseModule } from './modules/database/database.module';
 
 dotenv.config();
 
@@ -19,8 +20,10 @@ dotenv.config();
     AuthModule,
     UserModule,
     MongooseModule.forRoot(process.env.MONGODB_CONNECTION_STRING),
+    DatabaseModule,
   ],
   controllers: [],
   providers: [],
+  exports: []
 })
 export class AppModule {}

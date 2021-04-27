@@ -13,12 +13,14 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { JwtStrategy } from '../auth/passport/jwt-strategy';
 import { AuthModule } from '../auth/auth.module';
+import { DatabaseModule } from '../database/database.module';
 
 @Module({
   imports: [
     AuthModule,
     ConsoleModule,
     MongooseModule.forFeature([{ name: USER_MODEL_TOKEN, schema: UserSchema }]),
+    DatabaseModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserConsole, JwtStrategy],
