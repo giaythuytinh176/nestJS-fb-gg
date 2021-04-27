@@ -11,6 +11,7 @@ dotenv.config();
 
 @Module({
   imports: [
+    // Cai dat ket noi vs frontend thong qua thu muc client vs file index.html se duoc tu chay
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'client'),
     // }),

@@ -46,8 +46,8 @@ async function bootstrap() {
 
   app.use(compression());
 
-  app.enableCors({
-    origin: '*',
+  app.enableCors({ // Chi cho phep domain phia duoi truy cap vao trang web
+    origin: 'https://tamle.jp.ngrok.io',
     // "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     // "preflightContinue": false,
     // "optionsSuccessStatus": 204
